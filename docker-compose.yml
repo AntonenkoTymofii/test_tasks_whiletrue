@@ -1,0 +1,27 @@
+version: '3.1'
+
+volumes:
+  pg_test:
+
+services:
+  test_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test
+    volumes:
+      - pg_test:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - test_db
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://127.0.0.1:5432/test'
